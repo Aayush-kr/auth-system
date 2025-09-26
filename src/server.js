@@ -1,10 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
+dotenv.config()
 const cors = require('cors');
 const app = express();
 const cookieParser = require('cookie-parser')
 const {connectDb} = require('./config/dbConfig')
-const {redisClient}  = require('./config/redisConfig')
 const userRoutes = require('./routes/userRoutes');
 const { verifyUser } = require('./controller/UserController');
 app.use(express.json());
@@ -16,7 +16,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200
 }))
-dotenv.config()
 const PORT = process.env.PORT || 3000;
 connectDb();
 
