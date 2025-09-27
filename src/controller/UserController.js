@@ -109,7 +109,6 @@ const loginUser = TryCatch(async(req, res) => {
 
     
     const isValidPassword = await bcrypt.compare(password, user.password)
-    console.log("isValidPassword",isValidPassword, "user", user)
     if(!isValidPassword) {
         return res.status(400).json({
             message: "Invalid credentials",
@@ -181,7 +180,6 @@ const getRefreshToken = TryCatch( async (req, res) => {
         })
     }
     const decoded = await verifyRefreshToken(refreshToken);
-    console.log("decoded", decoded)
     if(!decoded) {
           return res.status(403).json({
             message: 'Invalid refresh token'
@@ -194,6 +192,30 @@ const getRefreshToken = TryCatch( async (req, res) => {
     })
 })
 
+const logoutUser = TryCatch( async (req,res) => {
+    const user = req.user;
+    const cache = await redisClient();
+    await cache.del(`refresh-token:${user._id}`);
+    // If cachedUser is null, skip deleting login-rate-limit
+    const cachedUser = await cache.get(`user:${user._id}`);
+    if (cachedUser) {
+        try {
+            const email = JSON.parse(cachedUser).email;
+            await cache.del(`login-rate-limit:${req.ip}:${email}`);
+            await cache.del(`user:${user._id}`);
+        } catch (e) {
+            // ignore JSON parse error
+        }
+    }
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    if (!res.headersSent) {
+        return res.status(200).json({
+            message: 'Logged out successfully'
+        });
+    }
+})
 
 
-module.exports = {registerUser, verifyUser, loginUser, verifyOtp, getProfile, getRefreshToken}
+
+module.exports = {registerUser, verifyUser, loginUser, verifyOtp, getProfile, getRefreshToken,logoutUser}

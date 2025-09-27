@@ -12,7 +12,7 @@ const generateTokens = async (_id, res) => {
     res.cookie('accessToken', accessToken, {
         httpOnly: true, // Prevents client-side JavaScript from accessing it
         secure: process.env.NODE_ENV === 'production', // Use secure in production (HTTPS)
-        maxAge: 1 * 60 * 1000,
+        maxAge: 5 * 60 * 1000,
         sameSite: 'strict', // Or 'Strict' depending on your requirements
     });
 
@@ -39,7 +39,7 @@ const generateAccessToken = async (_id, res) => {
     res.cookie('accessToken', accessToken, {
         httpOnly: true, // Prevents client-side JavaScript from accessing it
         secure: process.env.NODE_ENV === 'production', // Use secure in production (HTTPS)
-        maxAge: 1 * 60 * 1000,
+        maxAge: 5 * 60 * 1000,
         sameSite: 'strict', // Or 'Strict' depending on your requirements
     });
 }

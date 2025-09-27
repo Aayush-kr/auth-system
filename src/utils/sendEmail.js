@@ -14,8 +14,6 @@ const transporter = nodeMailer.createTransport({
 });
 
 const sendMail = async (to, subject, text, html) => {
-  console.log("process.env.SMTP_USER", process.env.SMTP_USER);
-  console.log("process.env.SMTP_PASSWORD", process.env.SMTP_PASSWORD);
     const info = await transporter.sendMail({
     from: process.env.SMTP_USER,
     to,
